@@ -25,9 +25,9 @@ void main()
 	float day_len = 4;
 	float dirl = sin(gorit / day_len);
 
-	vec3 lightDir = vec3(dirl, 1.0f, 1.0f);
+	vec3 lightDir = vec3(dirl, 2.0f, 1.0f);
 	vec3 col = vec3(0.0f, 0.9f, 0.75f);
-	float kd = max(dot(vNormal, lightDir), 0.3);
+	float kd = max(dot(vNormal, lightDir), 0.3) * 0.5;
 	float foggy = exp(-pow((fog / ((gl_FragCoord.z / gl_FragCoord.w))), 2.0));
 
 	if (mode1 == 1) {
@@ -36,8 +36,8 @@ void main()
 			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.5);
 
 		} 
-		if (vFragPosition.y >= 0 && vFragPosition.y < 3) {
-			col = vec3(col_to_fl(250), col_to_fl(250), col_to_fl(0));
+		if (vFragPosition.y >= 0 && vFragPosition.y < 3) { //sand
+			col = vec3(col_to_fl(252), col_to_fl(221), col_to_fl(118));
 			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.9);
 		}
 		if (vFragPosition.y >= 3 && vFragPosition.y < 10) {

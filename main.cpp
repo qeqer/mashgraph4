@@ -28,6 +28,7 @@ static float fog = 80;
 static bool fog_act = 0;
 static float gorit = 0.0;
 static float shift = 0.5;
+static bool day_change = true;
 
 
 
@@ -72,6 +73,15 @@ void OnKeyboardPressed(GLFWwindow* window, int key, int scancode, int action, in
 				fog_act = false;
 			} else {
 				fog_act = true;
+			}
+		}
+		break;
+	case GLFW_KEY_G:
+		if (action == GLFW_PRESS) {
+			if (day_change) {
+				day_change = false;
+			} else {
+				day_change = true;
 			}
 		}
 		break;
@@ -146,14 +156,14 @@ void doCameraMovement(Camera &camera, GLfloat deltaTime)
 \param size - размер плоскости
 \param vao - vertex array object, связанный с созданной плоскостью
 */
-float terrain = 0.2;
+float terrain = 0.3;
 float he = 1;
 int res = 257;
-float sz = 40;
-float max_h = 10;
-float min_h = -3;
+float sz = 200;
+float max_h = 25;
+float min_h = -10;
 float powing = 2;
-float waves = 0.01;
+float waves = 0.1;
 float waves_hz = 10;
 
 
@@ -295,6 +305,14 @@ void makemagic(std::vector<std::vector<GLfloat> > &strip) { //нормировк
 		for (uint j = 1; j < strip[i].size() - 1; j++) {
 			strip[i][j] = box_filter(temp, i, j);
 		}
+	}
+
+	float tre = strip.size();
+	for (uint i = 1; i < tre - 1; i++) {
+		strip[i][0] = (strip[i - 1][0] + strip[i][0] + strip[i + 1][0]) / 3; 
+		strip[i][tre - 1] = (strip[i - 1][tre - 1] + strip[i][tre - 1] + strip[i + 1][tre - 1]) / 3; 
+		strip[0][i] = (strip[0][i - 1] + strip[0][i] + strip[0][i + 1]) / 3; 
+		strip[tre - 1][i] = (strip[tre - 1][i - 1] + strip[tre - 1][i] + strip[tre - 1][i + 1]) / 3; 
 	}
 
 	return;
@@ -651,9 +669,13 @@ int main(int argc, char** argv)
 		float4x4 model; //начинаем с единичной матрицы
 
 		//простой свет
-		gorit = glfwGetTime();
+		if (day_change) {
+			gorit = glfwGetTime();			
+		} else {
+			gorit = 8;
+		}
 		//для волн сдвиг
-		shift = sin(gorit) * (float(sz) / 100); 
+		shift = sin(glfwGetTime()) * (float(sz) / 100); 
 
 		program.StartUseShader();
 
