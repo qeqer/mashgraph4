@@ -1,0 +1,3 @@
+/home/keker/Desktop/mashgraph4/CMakeFiles/rebuild_cache.dir
+/home/keker/Desktop/mashgraph4/CMakeFiles/edit_cache.dir
+/home/keker/Desktop/mashgraph4/CMakeFiles/main.dir

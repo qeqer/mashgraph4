@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/main.dir/glad.c.o CMakeFiles/main.dir/main.cpp.o CMakeFiles/main.dir/Camera.cpp.o CMakeFiles/main.dir/ShaderProgram.cpp.o  -o main /usr/lib/x86_64-linux-gnu/libGL.so -lglfw -lrt -ldl -lSOIL 
