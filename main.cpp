@@ -142,12 +142,12 @@ void doCameraMovement(Camera &camera, GLfloat deltaTime)
 \param size - размер плоскости
 \param vao - vertex array object, связанный с созданной плоскостью
 */
-float terrain = 0.3;
+float terrain = 0.1;
 float he = 1;
 int res = 513;
-float sz = 200;
-float max_h = 25;
-float min_h = -10;
+float sz = 40;
+float max_h = 10;
+float min_h = -5;
 float powing = 2;
 
 
@@ -319,7 +319,7 @@ static int createTriStrip(int rows, int cols, float size, GLuint &vao)
 
 	std::vector<std::vector<GLfloat> > ytemp(rows, std::vector<GLfloat>(cols, 0.0));
 	fillstrip(ytemp, rows, cols, size);
-	// makemagic(ytemp);
+	makemagic(ytemp);
 	// makeflatwater(ytemp);
 
 	for (int z = 0; z < rows; ++z)

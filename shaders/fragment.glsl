@@ -71,4 +71,5 @@ void main()
 			}
 
 	color = color * real_time;
+	color.w = 1.0;
 }
