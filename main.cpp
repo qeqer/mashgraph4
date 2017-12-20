@@ -9,6 +9,9 @@
 #include <random>
 #include "SOIL/SOIL.h"
 
+#define WATER 1
+#define SOIL 0
+
 
 static const GLsizei WIDTH = 1920, HEIGHT = 1080; //размеры окна
 static int filling = 0;
@@ -144,10 +147,10 @@ void doCameraMovement(Camera &camera, GLfloat deltaTime)
 */
 float terrain = 0.1;
 float he = 1;
-int res = 513;
+int res = 257;
 float sz = 40;
 float max_h = 10;
-float min_h = -5;
+float min_h = -3;
 float powing = 2;
 
 
@@ -294,7 +297,16 @@ void makemagic(std::vector<std::vector<GLfloat> > &strip) { //нормировк
 	return;
 }
 
-static int createTriStrip(int rows, int cols, float size, GLuint &vao)
+void makewater(std::vector<std::vector<GLfloat> > &strip) {
+	for (uint i = 0; i < strip.size(); i++) {
+		for (uint j = 0; j < strip[0].size(); j++) {
+			strip[i][j] = -0.0001;
+		}
+	}
+	return;
+}
+
+static int createTriStrip(int rows, int cols, float size, GLuint &vao, int type)
 {
 
 	int numIndices = 2 * cols * (rows - 1) + rows - 1;
@@ -318,10 +330,14 @@ static int createTriStrip(int rows, int cols, float size, GLuint &vao)
 	srand(time(NULL));
 
 	std::vector<std::vector<GLfloat> > ytemp(rows, std::vector<GLfloat>(cols, 0.0));
-	fillstrip(ytemp, rows, cols, size);
-	makemagic(ytemp);
-	// makeflatwater(ytemp);
-
+	if (type == SOIL) {
+		fillstrip(ytemp, rows, cols, size);
+		makemagic(ytemp);
+		// makeflatwater(ytemp);
+	}
+	if (type == WATER) {
+		makewater(ytemp);
+	}
 	for (int z = 0; z < rows; ++z)
 	{
 		for (int x = 0; x < cols; ++x)
@@ -559,11 +575,14 @@ int main(int argc, char** argv)
 	shaders[GL_VERTEX_SHADER]   = "vertex.glsl";
 	shaders[GL_FRAGMENT_SHADER] = "fragment.glsl";
 	ShaderProgram program(shaders); GL_CHECK_ERRORS;
+	ShaderProgram program2(shaders); GL_CHECK_ERRORS;
 
 
 	//Создаем и загружаем геометрию поверхности
 	GLuint vaoTriStrip;
-	int triStripIndices = createTriStrip(res, res, sz, vaoTriStrip);
+	int triStripIndices = createTriStrip(res, res, sz, vaoTriStrip, SOIL);
+	GLuint vaoTriStrip2;
+	int triStripIndices2 = createTriStrip(res, res, sz, vaoTriStrip2, WATER);
 
 
 	glViewport(0, 0, WIDTH, HEIGHT);  GL_CHECK_ERRORS;
@@ -597,7 +616,7 @@ int main(int argc, char** argv)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-// //цикл обработки сообщений и отрисовки сцены каждый кадр
+	// //цикл обработки сообщений и отрисовки сцены каждый кадр
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -608,6 +627,8 @@ int main(int argc, char** argv)
 
 		glfwPollEvents();
 		doCameraMovement(camera, deltaTime);
+
+
 
 		//очищаем экран каждый кадр
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f); GL_CHECK_ERRORS;
@@ -637,13 +658,6 @@ int main(int argc, char** argv)
 		program.SetUniform("gorit",      gorit);
 		program.SetUniform("fog_act",      fog_act);
 
-		//GLuint vaoTriStrip2;
-		//int triStripIndices2 = createTriStrip(res, res, sz, vaoTriStrip);
-
-		//рисуем плоскость
-		glBindVertexArray(vaoTriStrip);
-
-		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		program.SetUniform("Texture1", 0);
@@ -651,8 +665,15 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		program.SetUniform("Texture2", 1);
 
+		//рисуем плоскость
+		glBindVertexArray(vaoTriStrip);
+		
+		
+
 
 		glDrawElements(GL_TRIANGLE_STRIP, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
+		glBindVertexArray(vaoTriStrip2);
+		glDrawElements(GL_TRIANGLE_STRIP, triStripIndices2, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
 		glBindVertexArray(0); GL_CHECK_ERRORS;
 
 		program.StopUseShader();

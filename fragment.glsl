@@ -25,7 +25,6 @@ void main()
 {
 	float day_len = 4;
 	float dirl = sin(gorit / day_len);
-	//dirl = 1.0;
 
 	vec3 lightDir = vec3(dirl, 1.0f, 1.0f);
 	vec3 col = vec3(0.0f, 0.9f, 0.75f);
