@@ -27,6 +27,7 @@ static int mode1 = 1;
 static float fog = 80;
 static bool fog_act = 0;
 static float gorit = 0.0;
+static float shift = 0.5;
 
 
 
@@ -145,13 +146,15 @@ void doCameraMovement(Camera &camera, GLfloat deltaTime)
 \param size - размер плоскости
 \param vao - vertex array object, связанный с созданной плоскостью
 */
-float terrain = 0.1;
+float terrain = 0.2;
 float he = 1;
 int res = 257;
 float sz = 40;
 float max_h = 10;
 float min_h = -3;
 float powing = 2;
+float waves = 0.01;
+float waves_hz = 10;
 
 
 
@@ -297,10 +300,10 @@ void makemagic(std::vector<std::vector<GLfloat> > &strip) { //нормировк
 	return;
 }
 
-void makewater(std::vector<std::vector<GLfloat> > &strip) {
+void makewater(std::vector<std::vector<GLfloat> > &strip, float size) {
 	for (uint i = 0; i < strip.size(); i++) {
 		for (uint j = 0; j < strip[0].size(); j++) {
-			strip[i][j] = -0.0001;
+			strip[i][j] = 0.1 + waves * sin(waves_hz * i * size / strip.size());
 		}
 	}
 	return;
@@ -336,7 +339,7 @@ static int createTriStrip(int rows, int cols, float size, GLuint &vao, int type)
 		// makeflatwater(ytemp);
 	}
 	if (type == WATER) {
-		makewater(ytemp);
+		makewater(ytemp, size);
 	}
 	for (int z = 0; z < rows; ++z)
 	{
@@ -575,14 +578,18 @@ int main(int argc, char** argv)
 	shaders[GL_VERTEX_SHADER]   = "vertex.glsl";
 	shaders[GL_FRAGMENT_SHADER] = "fragment.glsl";
 	ShaderProgram program(shaders); GL_CHECK_ERRORS;
-	ShaderProgram program2(shaders); GL_CHECK_ERRORS;
+	
+	std::unordered_map<GLenum, std::string> shaders2;
+	shaders2[GL_VERTEX_SHADER]   = "vertex_water.glsl";
+	shaders2[GL_FRAGMENT_SHADER] = "water.glsl";
+	ShaderProgram program2(shaders2); GL_CHECK_ERRORS;
 
 
 	//Создаем и загружаем геометрию поверхности
 	GLuint vaoTriStrip;
 	int triStripIndices = createTriStrip(res, res, sz, vaoTriStrip, SOIL);
 	GLuint vaoTriStrip2;
-	int triStripIndices2 = createTriStrip(res, res, sz, vaoTriStrip2, WATER);
+	int triStripIndices2 = createTriStrip(res, res, sz + 2.0 * (float(sz) / 100), vaoTriStrip2, WATER);
 
 
 	glViewport(0, 0, WIDTH, HEIGHT);  GL_CHECK_ERRORS;
@@ -596,7 +603,7 @@ int main(int argc, char** argv)
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	int width, height;
-	unsigned char* image = SOIL_load_image("textures/img3.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	unsigned char* image = SOIL_load_image("textures/img4.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
@@ -643,11 +650,14 @@ int main(int argc, char** argv)
 		//модельная матрица, определяющая положение объекта в мировом пространстве
 		float4x4 model; //начинаем с единичной матрицы
 
+		//простой свет
+		gorit = glfwGetTime();
+		//для волн сдвиг
+		shift = sin(gorit) * (float(sz) / 100); 
+
 		program.StartUseShader();
 
-		//простой свет
 		
-		gorit = glfwGetTime();
 		//printf("%f\n", gorit);
 		//загружаем uniform-переменные в шейдерную программу (одинаковые для всех параллельно запускаемых копий шейдера)
 		program.SetUniform("view",       view);       GL_CHECK_ERRORS;
@@ -656,33 +666,43 @@ int main(int argc, char** argv)
 		program.SetUniform("mode1",      mode1);
 		program.SetUniform("fog",        fog);
 		program.SetUniform("gorit",      gorit);
-		program.SetUniform("fog_act",      fog_act);
+		program.SetUniform("fog_act",    fog_act);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		program.SetUniform("Texture1", 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
-		program.SetUniform("Texture2", 1);
 
 		//рисуем плоскость
 		glBindVertexArray(vaoTriStrip);
-		
-		
-
-
 		glDrawElements(GL_TRIANGLE_STRIP, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
+		
+		program2.StartUseShader(); GL_CHECK_ERRORS;
+
+		program2.SetUniform("view",       view);       GL_CHECK_ERRORS;
+		program2.SetUniform("projection", projection); GL_CHECK_ERRORS;
+		program2.SetUniform("model",      model);
+		program2.SetUniform("mode1",      mode1);
+		program2.SetUniform("fog",        fog);
+		program2.SetUniform("gorit",      gorit);
+		program2.SetUniform("fog_act",    fog_act);
+		program2.SetUniform("shift",      shift);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		program2.SetUniform("Texture2", 1);
+
 		glBindVertexArray(vaoTriStrip2);
 		glDrawElements(GL_TRIANGLE_STRIP, triStripIndices2, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
 		glBindVertexArray(0); GL_CHECK_ERRORS;
-
-		program.StopUseShader();
+		program2.StopUseShader();
+		
 
 		glfwSwapBuffers(window);
 	}
 
 	//очищаем vao перед закрытием программы
 	glDeleteVertexArrays(1, &vaoTriStrip);
+	glDeleteVertexArrays(1, &vaoTriStrip2);
 
 	glfwTerminate();
 	return 0;
