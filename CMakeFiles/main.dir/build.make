@@ -153,12 +153,112 @@ CMakeFiles/main.dir/ShaderProgram.cpp.o.provides: CMakeFiles/main.dir/ShaderProg
 CMakeFiles/main.dir/ShaderProgram.cpp.o.provides.build: CMakeFiles/main.dir/ShaderProgram.cpp.o
 
 
+CMakeFiles/main.dir/SOIL/image_DXT.c.o: CMakeFiles/main.dir/flags.make
+CMakeFiles/main.dir/SOIL/image_DXT.c.o: SOIL/image_DXT.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/keker/Desktop/mashgraph4/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/main.dir/SOIL/image_DXT.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/main.dir/SOIL/image_DXT.c.o   -c /home/keker/Desktop/mashgraph4/SOIL/image_DXT.c
+
+CMakeFiles/main.dir/SOIL/image_DXT.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/main.dir/SOIL/image_DXT.c.i"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/keker/Desktop/mashgraph4/SOIL/image_DXT.c > CMakeFiles/main.dir/SOIL/image_DXT.c.i
+
+CMakeFiles/main.dir/SOIL/image_DXT.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/main.dir/SOIL/image_DXT.c.s"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/keker/Desktop/mashgraph4/SOIL/image_DXT.c -o CMakeFiles/main.dir/SOIL/image_DXT.c.s
+
+CMakeFiles/main.dir/SOIL/image_DXT.c.o.requires:
+
+.PHONY : CMakeFiles/main.dir/SOIL/image_DXT.c.o.requires
+
+CMakeFiles/main.dir/SOIL/image_DXT.c.o.provides: CMakeFiles/main.dir/SOIL/image_DXT.c.o.requires
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/SOIL/image_DXT.c.o.provides.build
+.PHONY : CMakeFiles/main.dir/SOIL/image_DXT.c.o.provides
+
+CMakeFiles/main.dir/SOIL/image_DXT.c.o.provides.build: CMakeFiles/main.dir/SOIL/image_DXT.c.o
+
+
+CMakeFiles/main.dir/SOIL/image_helper.c.o: CMakeFiles/main.dir/flags.make
+CMakeFiles/main.dir/SOIL/image_helper.c.o: SOIL/image_helper.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/keker/Desktop/mashgraph4/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/main.dir/SOIL/image_helper.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/main.dir/SOIL/image_helper.c.o   -c /home/keker/Desktop/mashgraph4/SOIL/image_helper.c
+
+CMakeFiles/main.dir/SOIL/image_helper.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/main.dir/SOIL/image_helper.c.i"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/keker/Desktop/mashgraph4/SOIL/image_helper.c > CMakeFiles/main.dir/SOIL/image_helper.c.i
+
+CMakeFiles/main.dir/SOIL/image_helper.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/main.dir/SOIL/image_helper.c.s"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/keker/Desktop/mashgraph4/SOIL/image_helper.c -o CMakeFiles/main.dir/SOIL/image_helper.c.s
+
+CMakeFiles/main.dir/SOIL/image_helper.c.o.requires:
+
+.PHONY : CMakeFiles/main.dir/SOIL/image_helper.c.o.requires
+
+CMakeFiles/main.dir/SOIL/image_helper.c.o.provides: CMakeFiles/main.dir/SOIL/image_helper.c.o.requires
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/SOIL/image_helper.c.o.provides.build
+.PHONY : CMakeFiles/main.dir/SOIL/image_helper.c.o.provides
+
+CMakeFiles/main.dir/SOIL/image_helper.c.o.provides.build: CMakeFiles/main.dir/SOIL/image_helper.c.o
+
+
+CMakeFiles/main.dir/SOIL/SOIL.c.o: CMakeFiles/main.dir/flags.make
+CMakeFiles/main.dir/SOIL/SOIL.c.o: SOIL/SOIL.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/keker/Desktop/mashgraph4/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/main.dir/SOIL/SOIL.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/main.dir/SOIL/SOIL.c.o   -c /home/keker/Desktop/mashgraph4/SOIL/SOIL.c
+
+CMakeFiles/main.dir/SOIL/SOIL.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/main.dir/SOIL/SOIL.c.i"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/keker/Desktop/mashgraph4/SOIL/SOIL.c > CMakeFiles/main.dir/SOIL/SOIL.c.i
+
+CMakeFiles/main.dir/SOIL/SOIL.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/main.dir/SOIL/SOIL.c.s"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/keker/Desktop/mashgraph4/SOIL/SOIL.c -o CMakeFiles/main.dir/SOIL/SOIL.c.s
+
+CMakeFiles/main.dir/SOIL/SOIL.c.o.requires:
+
+.PHONY : CMakeFiles/main.dir/SOIL/SOIL.c.o.requires
+
+CMakeFiles/main.dir/SOIL/SOIL.c.o.provides: CMakeFiles/main.dir/SOIL/SOIL.c.o.requires
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/SOIL/SOIL.c.o.provides.build
+.PHONY : CMakeFiles/main.dir/SOIL/SOIL.c.o.provides
+
+CMakeFiles/main.dir/SOIL/SOIL.c.o.provides.build: CMakeFiles/main.dir/SOIL/SOIL.c.o
+
+
+CMakeFiles/main.dir/SOIL/stb_image_aug.c.o: CMakeFiles/main.dir/flags.make
+CMakeFiles/main.dir/SOIL/stb_image_aug.c.o: SOIL/stb_image_aug.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/keker/Desktop/mashgraph4/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/main.dir/SOIL/stb_image_aug.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/main.dir/SOIL/stb_image_aug.c.o   -c /home/keker/Desktop/mashgraph4/SOIL/stb_image_aug.c
+
+CMakeFiles/main.dir/SOIL/stb_image_aug.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/main.dir/SOIL/stb_image_aug.c.i"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/keker/Desktop/mashgraph4/SOIL/stb_image_aug.c > CMakeFiles/main.dir/SOIL/stb_image_aug.c.i
+
+CMakeFiles/main.dir/SOIL/stb_image_aug.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/main.dir/SOIL/stb_image_aug.c.s"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/keker/Desktop/mashgraph4/SOIL/stb_image_aug.c -o CMakeFiles/main.dir/SOIL/stb_image_aug.c.s
+
+CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.requires:
+
+.PHONY : CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.requires
+
+CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.provides: CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.requires
+	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.provides.build
+.PHONY : CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.provides
+
+CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.provides.build: CMakeFiles/main.dir/SOIL/stb_image_aug.c.o
+
+
 # Object files for target main
 main_OBJECTS = \
 "CMakeFiles/main.dir/glad.c.o" \
 "CMakeFiles/main.dir/main.cpp.o" \
 "CMakeFiles/main.dir/Camera.cpp.o" \
-"CMakeFiles/main.dir/ShaderProgram.cpp.o"
+"CMakeFiles/main.dir/ShaderProgram.cpp.o" \
+"CMakeFiles/main.dir/SOIL/image_DXT.c.o" \
+"CMakeFiles/main.dir/SOIL/image_helper.c.o" \
+"CMakeFiles/main.dir/SOIL/SOIL.c.o" \
+"CMakeFiles/main.dir/SOIL/stb_image_aug.c.o"
 
 # External object files for target main
 main_EXTERNAL_OBJECTS =
@@ -167,10 +267,14 @@ main: CMakeFiles/main.dir/glad.c.o
 main: CMakeFiles/main.dir/main.cpp.o
 main: CMakeFiles/main.dir/Camera.cpp.o
 main: CMakeFiles/main.dir/ShaderProgram.cpp.o
+main: CMakeFiles/main.dir/SOIL/image_DXT.c.o
+main: CMakeFiles/main.dir/SOIL/image_helper.c.o
+main: CMakeFiles/main.dir/SOIL/SOIL.c.o
+main: CMakeFiles/main.dir/SOIL/stb_image_aug.c.o
 main: CMakeFiles/main.dir/build.make
 main: /usr/lib/x86_64-linux-gnu/libGL.so
 main: CMakeFiles/main.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/keker/Desktop/mashgraph4/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/keker/Desktop/mashgraph4/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable main"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/main.dir/link.txt --verbose=$(VERBOSE)
 	/usr/bin/cmake -E copy_directory /home/keker/Desktop/mashgraph4/shaders /home/keker/Desktop/mashgraph4
 
@@ -183,6 +287,10 @@ CMakeFiles/main.dir/requires: CMakeFiles/main.dir/glad.c.o.requires
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/main.cpp.o.requires
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/Camera.cpp.o.requires
 CMakeFiles/main.dir/requires: CMakeFiles/main.dir/ShaderProgram.cpp.o.requires
+CMakeFiles/main.dir/requires: CMakeFiles/main.dir/SOIL/image_DXT.c.o.requires
+CMakeFiles/main.dir/requires: CMakeFiles/main.dir/SOIL/image_helper.c.o.requires
+CMakeFiles/main.dir/requires: CMakeFiles/main.dir/SOIL/SOIL.c.o.requires
+CMakeFiles/main.dir/requires: CMakeFiles/main.dir/SOIL/stb_image_aug.c.o.requires
 
 .PHONY : CMakeFiles/main.dir/requires
 

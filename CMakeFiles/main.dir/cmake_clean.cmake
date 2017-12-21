@@ -3,6 +3,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/main.dir/main.cpp.o"
   "CMakeFiles/main.dir/Camera.cpp.o"
   "CMakeFiles/main.dir/ShaderProgram.cpp.o"
+  "CMakeFiles/main.dir/SOIL/image_DXT.c.o"
+  "CMakeFiles/main.dir/SOIL/image_helper.c.o"
+  "CMakeFiles/main.dir/SOIL/SOIL.c.o"
+  "CMakeFiles/main.dir/SOIL/stb_image_aug.c.o"
   "main.pdb"
   "main"
 )

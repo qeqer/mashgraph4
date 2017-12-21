@@ -10,7 +10,17 @@ set(SOURCE_FILES
         Camera.h
         Camera.cpp
         ShaderProgram.h
-        ShaderProgram.cpp)
+        ShaderProgram.cpp
+        SOIL/image_DXT.c
+        SOIL/image_DXT.h
+        SOIL/image_helper.c
+        SOIL/image_helper.h
+        SOIL/SOIL.c
+        SOIL/SOIL.h
+        SOIL/stbi_DDS_aug_c.h
+        SOIL/stbi_DDS_aug.h
+        SOIL/stb_image_aug.c
+        SOIL/stb_image_aug.h)
 
 set(ADDITIONAL_INCLUDE_DIRS
         dependencies/include/GLAD)
@@ -48,6 +58,6 @@ if(WIN32)
   target_link_libraries(main LINK_PUBLIC ${OPENGL_gl_LIBRARY} glfw3dll)
 else()
   target_compile_options(main PRIVATE -Wnarrowing)
-  target_link_libraries(main LINK_PUBLIC ${OPENGL_gl_LIBRARY} glfw rt dl SOIL)
+  target_link_libraries(main LINK_PUBLIC ${OPENGL_gl_LIBRARY} glfw rt dl)
 endif()
 

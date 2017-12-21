@@ -5,6 +5,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "/home/keker/Desktop/mashgraph4/SOIL/SOIL.c" "/home/keker/Desktop/mashgraph4/CMakeFiles/main.dir/SOIL/SOIL.c.o"
+  "/home/keker/Desktop/mashgraph4/SOIL/image_DXT.c" "/home/keker/Desktop/mashgraph4/CMakeFiles/main.dir/SOIL/image_DXT.c.o"
+  "/home/keker/Desktop/mashgraph4/SOIL/image_helper.c" "/home/keker/Desktop/mashgraph4/CMakeFiles/main.dir/SOIL/image_helper.c.o"
+  "/home/keker/Desktop/mashgraph4/SOIL/stb_image_aug.c" "/home/keker/Desktop/mashgraph4/CMakeFiles/main.dir/SOIL/stb_image_aug.c.o"
   "/home/keker/Desktop/mashgraph4/glad.c" "/home/keker/Desktop/mashgraph4/CMakeFiles/main.dir/glad.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
