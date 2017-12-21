@@ -31,21 +31,31 @@ void main()
 	float foggy = exp(-pow((fog / ((gl_FragCoord.z / gl_FragCoord.w))), 2.0));
 
 	if (mode1 == 1) {
-		if (vFragPosition.y < 0) { //water
+		float h = vFragPosition.y;
+		if (vFragPosition.y < -2) { //water
 			col = vec3(col_to_fl(250), col_to_fl(250), col_to_fl(5));
 			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.5);
 
 		} 
-		if (vFragPosition.y >= 0 && vFragPosition.y < 3) { //sand
-			col = vec3(col_to_fl(252), col_to_fl(221), col_to_fl(118));
-			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.9);
+		if (h >= -2 && vFragPosition.y < 0) { //water
+			col = vec3(col_to_fl(250 + (h + 2) * (252 - 250) / 2), col_to_fl(250 + (h + 2) * (221 - 250) / 2), col_to_fl(5 + (h + 2) * (118 - 5) / 2));
+			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.5 + (h + 2) * 0.15);
+
 		}
-		if (vFragPosition.y >= 3 && vFragPosition.y < 10) {
+		if (vFragPosition.y >= 0 && vFragPosition.y < 2.5) { //sand
+			col = vec3(col_to_fl(252), col_to_fl(221), col_to_fl(118));
+			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.8);
+		}
+		if (vFragPosition.y >= 2.5 && vFragPosition.y < 3.5) { //sand
+			col = vec3(col_to_fl(252 + (h - 2.5) * (39 - 252)) , col_to_fl(221 + (h - 2.5) * (140 - 221)), col_to_fl(118 + (h - 2.5) * (0 - 118)));
+			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.8 + (h - 2.5) * 0.1);
+		}
+		if (vFragPosition.y >= 3.5 && vFragPosition.y < 10) {
 			col = vec3(col_to_fl(39), col_to_fl(140), col_to_fl(0));
 			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.9);
 
 		}
-		float h = vFragPosition.y;
+		
 		if (vFragPosition.y >= 10) { 
 			col = vec3(col_to_fl(39 + (h - 10) * (255 - 39) / 20), col_to_fl(140 + (h - 10) * (255 - 140) / 11), col_to_fl(25 * (h - 10)));
 			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.9);

@@ -156,15 +156,15 @@ void doCameraMovement(Camera &camera, GLfloat deltaTime)
 \param size - размер плоскости
 \param vao - vertex array object, связанный с созданной плоскостью
 */
-float terrain = 0.3;
+float terrain = 0.4;
 float he = 1;
 int res = 257;
 float sz = 200;
 float max_h = 25;
 float min_h = -10;
 float powing = 2;
-float waves = 0.1;
-float waves_hz = 10;
+float waves = 0.5;
+float waves_num = 100;
 
 
 
@@ -173,12 +173,16 @@ void filldiam(std::vector<std::vector<GLfloat> > &strip, int rowl, int rowr, int
 	int down = rowr < rows ? rowr : rowr - rows + 1;
 	int left = coll >= 0 ? coll : cols - 1 + coll;
 	int right = colr < cols ? colr : colr - cols + 1;
+	float diff = terrain * (float(rand()) / RAND_MAX - 0.5) * (size / rows * (rowl - rowr));
+	if ((rowl + rowr == 0 || rowl + rowr == rows - 1) || (coll + colr == 0 || coll + colr == cols - 1)) {
+		diff = 0;
+	}
 	strip[(rowr + rowl) / 2][(colr + coll) / 2] = (
 	            strip[up][(coll + colr) / 2] +
 	            strip[down][(coll + colr) / 2] +
 	            strip[(rowl + rowr) / 2][left] +
 	            strip[(rowl + rowr) / 2][right]
-	        ) / 4 + terrain * (float(rand()) / RAND_MAX - 0.5) * (size / rows * (rowl - rowr));
+	        ) / 4;// + terrain * (float(rand()) / RAND_MAX - 0.5) * (size / rows * (rowl - rowr));
 	// printf("Diam: %d %d %d %d %d %d %d %d %d %d %f\n", rowl, rowr, coll, colr, rows, cols, up, down, left, right, strip[(rowr + rowl) / 2][(colr + coll) / 2]);
 	return;
 }
@@ -318,10 +322,10 @@ void makemagic(std::vector<std::vector<GLfloat> > &strip) { //нормировк
 	return;
 }
 
-void makewater(std::vector<std::vector<GLfloat> > &strip, float size) {
+void makewater(std::vector<std::vector<GLfloat> > &strip, float size) { //makes sinusoidal water waves
 	for (uint i = 0; i < strip.size(); i++) {
 		for (uint j = 0; j < strip[0].size(); j++) {
-			strip[i][j] = 0.1 + waves * sin(waves_hz * i * size / strip.size());
+			strip[i][j] = 0.1 + waves * sin(M_PI *  i * size * waves_num / (strip.size() - 1));
 		}
 	}
 	return;
@@ -364,8 +368,8 @@ static int createTriStrip(int rows, int cols, float size, GLuint &vao, int type)
 		for (int x = 0; x < cols; ++x)
 		{
 			//вычисляем координаты каждой из вершин
-			float xx = -size / 2 + x * size / cols;
-			float zz = -size / 2 + z * size / rows;
+			float xx = -size / 2 + x * size / (cols - 1);
+			float zz = -size / 2 + z * size / (rows - 1);
 			float yy = float(ytemp[z][x]) / he;
 			//float r = sqrt(xx*xx + zz*zz);
 			// float yy = 5.0f * (r != 0.0f ? sin(r) / r : 1.0f);
@@ -607,7 +611,7 @@ int main(int argc, char** argv)
 	GLuint vaoTriStrip;
 	int triStripIndices = createTriStrip(res, res, sz, vaoTriStrip, SOIL);
 	GLuint vaoTriStrip2;
-	int triStripIndices2 = createTriStrip(res, res, sz + 2.0 * (float(sz) / 100), vaoTriStrip2, WATER);
+	int triStripIndices2 = createTriStrip(res, res, sz, vaoTriStrip2, WATER);
 
 
 	glViewport(0, 0, WIDTH, HEIGHT);  GL_CHECK_ERRORS;
@@ -684,7 +688,6 @@ int main(int argc, char** argv)
 		//загружаем uniform-переменные в шейдерную программу (одинаковые для всех параллельно запускаемых копий шейдера)
 		program.SetUniform("view",       view);       GL_CHECK_ERRORS;
 		program.SetUniform("projection", projection); GL_CHECK_ERRORS;
-		program.SetUniform("model",      model);
 		program.SetUniform("mode1",      mode1);
 		program.SetUniform("fog",        fog);
 		program.SetUniform("gorit",      gorit);
@@ -695,14 +698,20 @@ int main(int argc, char** argv)
 		program.SetUniform("Texture1", 0);
 
 		//рисуем плоскость
+
 		glBindVertexArray(vaoTriStrip);
-		glDrawElements(GL_TRIANGLE_STRIP, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				float4x4 temp = transpose(translate4x4(float3(float(i) * 200, 0.0, float(j) * 200)));
+				program.SetUniform("model",      temp);
+				glDrawElements(GL_TRIANGLE_STRIP, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
+			}
+		}
 		
 		program2.StartUseShader(); GL_CHECK_ERRORS;
 
 		program2.SetUniform("view",       view);       GL_CHECK_ERRORS;
 		program2.SetUniform("projection", projection); GL_CHECK_ERRORS;
-		program2.SetUniform("model",      model);
 		program2.SetUniform("mode1",      mode1);
 		program2.SetUniform("fog",        fog);
 		program2.SetUniform("gorit",      gorit);
@@ -714,7 +723,13 @@ int main(int argc, char** argv)
 		program2.SetUniform("Texture2", 1);
 
 		glBindVertexArray(vaoTriStrip2);
-		glDrawElements(GL_TRIANGLE_STRIP, triStripIndices2, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				float4x4 temp = transpose(translate4x4(float3(float(i) * 200, 0.0, float(j) * 200)));
+				program2.SetUniform("model",      temp);
+				glDrawElements(GL_TRIANGLE_STRIP, triStripIndices2, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
+			}
+		}
 		glBindVertexArray(0); GL_CHECK_ERRORS;
 		program2.StopUseShader();
 		
