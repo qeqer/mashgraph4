@@ -29,6 +29,7 @@ static bool fog_act = 0;
 static float gorit = 0.0;
 static float shift = 0.5;
 static bool day_change = true;
+static bool change_map = false;
 
 
 
@@ -92,6 +93,10 @@ void OnKeyboardPressed(GLFWwindow* window, int key, int scancode, int action, in
 			} else {
 				mode1 = 2;
 			}
+		}
+	case GLFW_KEY_C:
+		if (action == GLFW_PRESS) {
+			change_map = true;
 		}
 	default:
 		if (action == GLFW_PRESS)
@@ -672,6 +677,10 @@ int main(int argc, char** argv)
 
 	while (!glfwWindowShouldClose(window))
 	{
+		if (change_map) {
+			triStripIndices = createTriStrip(res, res, sz, vaoTriStrip, SOIL);
+			change_map = false;
+		}
 		//считаем сколько времени прошло за кадр
 		GLfloat currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
