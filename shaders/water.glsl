@@ -28,6 +28,7 @@ float ToLinear(float depth) {
 }
 
 
+
 void main()
 {
 	float day_len = 4;
@@ -40,7 +41,7 @@ void main()
 	vec4 temp = texture(Texture2, vTexCoords);
 	if (mode1 == 1) {
 			col = vec3(col_to_fl(0), col_to_fl(82), col_to_fl(183));
-			color = mix(temp, vec4(kd * col, 1.0), 0.8);
+			color = mix(temp, vec4(kd * col, 1.0), 0.99);
 	} else if (mode1 == 0) {
 		color = vec4(vNormal * 0.5 + vec3(0.5, 0.5, 0.5), 1.0);
 	} else if (mode1 == 2) {

@@ -144,8 +144,37 @@ void OnMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
 	camera.ProcessMouseScroll(GLfloat(yoffset));
 }
 
+
+//PARAMS
+/**
+\brief создать triangle strip плоскость и загрузить её в шейдерную программу
+\param rows - число строк
+\param cols - число столбцов
+\param size - размер плоскости
+\param vao - vertex array object, связанный с созданной плоскостью
+*/
+
+float fl_mod(float d, float a) { //d % a but for float ATTENTION: -10 % 3 = -1!!!!
+	d = (d - int(d / a) * a);
+	return d;
+}
+
+float terrain = 0.4; //hilly
+float he = 1; //old param, don't use
+int res = 257; //resolution of map
+float sz = 200; //size of map
+float max_h = 25; //max height of result map
+float min_h = -10; //min height of result map
+float powing = 2; //pow of landscape norming
+float waves = 0.5; //amplitude
+float waves_num = 32; //must be a pow of 2, num of waves for one chank
+int copies_num = 5; //how far u load chanks
+
 void doCameraMovement(Camera &camera, GLfloat deltaTime)
 {
+	camera.pos.x = fl_mod(camera.pos.x, sz);
+	camera.pos.y = fl_mod(camera.pos.y, sz);
+	camera.pos.z = fl_mod(camera.pos.z, sz);
 	if (keys[GLFW_KEY_W])
 		camera.ProcessKeyboard(FORWARD, deltaTime);
 	if (keys[GLFW_KEY_A])
@@ -157,22 +186,6 @@ void doCameraMovement(Camera &camera, GLfloat deltaTime)
 }
 
 
-/**
-\brief создать triangle strip плоскость и загрузить её в шейдерную программу
-\param rows - число строк
-\param cols - число столбцов
-\param size - размер плоскости
-\param vao - vertex array object, связанный с созданной плоскостью
-*/
-float terrain = 0.4;
-float he = 1;
-int res = 257;
-float sz = 200;
-float max_h = 25;
-float min_h = -10;
-float powing = 2;
-float waves = 0.5;
-float waves_num = 100;
 
 
 
@@ -333,7 +346,7 @@ void makemagic(std::vector<std::vector<GLfloat> > &strip) { //нормировк
 void makewater(std::vector<std::vector<GLfloat> > &strip, float size) { //makes sinusoidal water waves
 	for (uint i = 0; i < strip.size(); i++) {
 		for (uint j = 0; j < strip[0].size(); j++) {
-			strip[i][j] = 0.1 + waves * sin(M_PI *  i * size * waves_num / (strip.size() - 1));
+			strip[i][j] = 0.1 + waves * sin(M_PI *  i * waves_num / (strip.size() - 1));
 		}
 	}
 	return;
@@ -565,6 +578,8 @@ int initGL()
 	return 0;
 }
 
+
+
 int main(int argc, char** argv)
 {
 	if (!glfwInit())
@@ -687,7 +702,8 @@ int main(int argc, char** argv)
 			gorit = 8;
 		}
 		//для волн сдвиг
-		shift = sin(glfwGetTime()) * (float(sz) / 100); 
+		//shift = sin(glfwGetTime()) * (float(sz) / 100);
+		shift = fl_mod(glfwGetTime(), 16.0 * 200 / 256);
 
 		program.StartUseShader();
 
@@ -708,8 +724,8 @@ int main(int argc, char** argv)
 		//рисуем плоскость
 
 		glBindVertexArray(vaoTriStrip);
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
+		for (int i = -copies_num / 2; i <= copies_num / 2; i++) {
+			for (int j = -copies_num / 2; j <= copies_num / 2; j++) {
 				float4x4 temp = transpose(translate4x4(float3(float(i) * 200, 0.0, float(j) * 200)));
 				program.SetUniform("model",      temp);
 				glDrawElements(GL_TRIANGLE_STRIP, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
@@ -731,8 +747,8 @@ int main(int argc, char** argv)
 		program2.SetUniform("Texture2", 1);
 
 		glBindVertexArray(vaoTriStrip2);
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
+		for (int i = -copies_num / 2; i <= copies_num / 2; i++) {
+			for (int j = -copies_num / 2; j <= copies_num / 2; j++) {
 				float4x4 temp = transpose(translate4x4(float3(float(i) * 200, 0.0, float(j) * 200)));
 				program2.SetUniform("model",      temp);
 				glDrawElements(GL_TRIANGLE_STRIP, triStripIndices2, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;

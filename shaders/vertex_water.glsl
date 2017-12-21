@@ -13,6 +13,8 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform float shift;
 
+
+
 void main()
 {
 	vec3 ver = vec3(vertex.x + shift, vertex.y, vertex.z + shift);
