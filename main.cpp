@@ -30,6 +30,7 @@ static float gorit = 0.0;
 static float shift = 0.5;
 static bool day_change = true;
 static bool change_map = false;
+static bool show_arr = false;
 
 
 
@@ -68,6 +69,13 @@ void OnKeyboardPressed(GLFWwindow* window, int key, int scancode, int action, in
 		mode1 = 1;
 		// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		break;
+	
+	case GLFW_KEY_N:
+		if (action == GLFW_PRESS) {
+			show_arr ^=1;
+		}
+		break;
+
 	case GLFW_KEY_F:
 		if (action == GLFW_PRESS) {
 			if (fog_act) {
@@ -298,17 +306,6 @@ float box_filter(std::vector<std::vector<GLfloat> > &strip, uint row, uint col) 
 		}
 	}
 	return sum / 9;
-}
-
-void makeflatwater(std::vector<std::vector<GLfloat> > &strip) {
-	for (uint i = 0; i < strip.size(); i++) {
-		for (uint j = 0; j < strip[i].size(); j++) {
-			if (strip[i][j] < 0) {
-				strip[i][j] = -0.5;
-			}
-		}
-	}
-	return;
 }
 
 void makemagic(std::vector<std::vector<GLfloat> > &strip) { //нормировка, бокс фильтер
@@ -640,6 +637,12 @@ int main(int argc, char** argv)
 	shaders3[GL_VERTEX_SHADER]   = "vertex_sky.glsl";
 	shaders3[GL_FRAGMENT_SHADER] = "fragment_sky.glsl";
 	ShaderProgram program3(shaders3); GL_CHECK_ERRORS;
+	
+	std::unordered_map<GLenum, std::string> shaders4;
+	shaders4[GL_VERTEX_SHADER]   = "vertex_normals.glsl";
+	shaders4[GL_FRAGMENT_SHADER] = "fragment_normals.glsl";
+	shaders4[GL_GEOMETRY_SHADER] = "geometry_normals.glsl";
+	ShaderProgram program4(shaders4); GL_CHECK_ERRORS;
 
 	//Создаем и загружаем геометрию поверхности
 	GLuint vaoTriStrip;
@@ -697,20 +700,9 @@ int main(int argc, char** argv)
 
 	glBindVertexArray(0); // Unbind
 
-
-
-
-
-
-
-
-
-
 	glViewport(0, 0, WIDTH, HEIGHT);  GL_CHECK_ERRORS;
 	glEnable(GL_DEPTH_TEST);  GL_CHECK_ERRORS;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
 
 	//текстурки
 	GLuint texture1, texture2;
@@ -780,18 +772,9 @@ int main(int argc, char** argv)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);GL_CHECK_ERRORS;
 	SOIL_free_image_data(image);
 
-
-
-
-
-
-
-
 	//прозрачность
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
 
 
 	// //цикл обработки сообщений и отрисовки сцены каждый кадр
@@ -852,14 +835,28 @@ int main(int argc, char** argv)
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		program.SetUniform("Texture2", 1);
 		//рисуем плоскость
-
+		float4x4 temp;
 		glBindVertexArray(vaoTriStrip);
 		for (int i = -copies_num / 2; i <= copies_num / 2; i++) {
 			for (int j = -copies_num / 2; j <= copies_num / 2; j++) {
-				float4x4 temp = transpose(translate4x4(float3(float(i) * 200, 0.0, float(j) * 200)));
+				temp = transpose(translate4x4(float3(float(i) * 200, 0.0, float(j) * 200)));
 				program.SetUniform("model",      temp);
 				glDrawElements(GL_TRIANGLE_STRIP, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
 			}
+		}
+		float4x4 model; //начинаем с единичной матрицы
+		if (show_arr) {
+			program4.StartUseShader();
+			for (int i = -copies_num / 2; i <= copies_num / 2; i++) {
+				for (int j = -copies_num / 2; j <= copies_num / 2; j++) {
+					temp = transpose(translate4x4(float3(float(i) * 200, 0.0, float(j) * 200)));
+					program4.SetUniform("view",       view);       GL_CHECK_ERRORS;
+					program4.SetUniform("projection", projection); GL_CHECK_ERRORS;
+					program4.SetUniform("model",      temp); GL_CHECK_ERRORS;
+					glDrawElements(GL_TRIANGLES, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
+				}
+			}
+			program4.StopUseShader();
 		}
 
 		program2.StartUseShader(); GL_CHECK_ERRORS;
@@ -883,8 +880,8 @@ int main(int argc, char** argv)
 			}
 		}
 
-		//glDepthMask(GL_FALSE);
-		float4x4 model; //начинаем с единичной матрицы
+		glDepthMask(GL_FALSE);
+		
 
 		program3.StartUseShader();
 		glActiveTexture(GL_TEXTURE2);
@@ -908,8 +905,10 @@ int main(int argc, char** argv)
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
-		//glDepthMask(GL_TRUE);
+		glDepthMask(GL_TRUE);
 		program3.StopUseShader();
+		
+		
 
 
 		glfwSwapBuffers(window);
