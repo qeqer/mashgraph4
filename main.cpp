@@ -85,6 +85,14 @@ void OnKeyboardPressed(GLFWwindow* window, int key, int scancode, int action, in
 			}
 		}
 		break;
+	case GLFW_KEY_Z:
+		if (action == GLFW_PRESS) {
+			if (mode1 == 2) {
+				mode1 = 1;
+			} else {
+				mode1 = 2;
+			}
+		}
 	default:
 		if (action == GLFW_PRESS)
 			keys[key] = true;

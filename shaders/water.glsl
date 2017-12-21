@@ -20,6 +20,14 @@ float col_to_fl(float color) {
 	return (color) / 255;
 }
 
+float ToLinear(float depth) {
+	float zNear = 0.1;
+	float zFar = 300;
+	float linear_dep = (2.0 * zNear * zFar) / (zFar + zNear - (gl_FragCoord.z * 2.0 - 1.0) * (zFar - zNear));
+	return linear_dep / zFar;
+}
+
+
 void main()
 {
 	float day_len = 4;
@@ -33,8 +41,10 @@ void main()
 	if (mode1 == 1) {
 			col = vec3(col_to_fl(0), col_to_fl(82), col_to_fl(183));
 			color = mix(temp, vec4(kd * col, 1.0), 0.8);
-	} else {
+	} else if (mode1 == 0) {
 		color = vec4(vNormal * 0.5 + vec3(0.5, 0.5, 0.5), 1.0);
+	} else if (mode1 == 2) {
+		color = vec4(vec3(ToLinear(gl_FragCoord.z)), 1.0);
 	}
 	//fog
 	if (fog_act) {
