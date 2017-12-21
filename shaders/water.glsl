@@ -2,7 +2,6 @@
 in vec3 vFragPosition;
 in vec2 vTexCoords;
 in vec3 vNormal;
-uniform sampler2D Texture2;
 uniform int mode1;
 uniform float fog;
 uniform float gorit;
@@ -38,10 +37,9 @@ void main()
 	vec3 col = vec3(0.0f, 0.9f, 0.75f);
 	float kd = max(dot(vNormal, lightDir), 0.0);
 	float foggy = exp(-pow((fog / ((gl_FragCoord.z / gl_FragCoord.w))), 2.0));
-	vec4 temp = texture(Texture2, vTexCoords);
 	if (mode1 == 1) {
 			col = vec3(col_to_fl(0), col_to_fl(82), col_to_fl(183));
-			color = mix(temp, vec4(kd * col, 1.0), 0.99);
+			color = vec4(kd * col, 1.0);
 	} else if (mode1 == 0) {
 		color = vec4(vNormal * 0.5 + vec3(0.5, 0.5, 0.5), 1.0);
 	} else if (mode1 == 2) {

@@ -3,6 +3,7 @@ in vec3 vFragPosition;
 in vec2 vTexCoords;
 in vec3 vNormal;
 uniform sampler2D Texture1;
+uniform sampler2D Texture2;
 uniform int mode1;
 uniform float fog;
 uniform float gorit;
@@ -39,14 +40,15 @@ void main()
 
 	if (mode1 == 1) {
 		float h = vFragPosition.y;
-		if (vFragPosition.y < -2) { //water
+		if (vFragPosition.y < -2) { //underwater
 			col = vec3(col_to_fl(250), col_to_fl(250), col_to_fl(5));
-			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.5);
+			color = mix(texture(Texture2, vTexCoords), vec4(kd * col, 1.0), 0.5);
 
 		} 
 		if (h >= -2 && vFragPosition.y < 0) { //water
 			col = vec3(col_to_fl(250 + (h + 2) * (252 - 250) / 2), col_to_fl(250 + (h + 2) * (221 - 250) / 2), col_to_fl(5 + (h + 2) * (118 - 5) / 2));
-			color = mix(texture(Texture1, vTexCoords), vec4(kd * col, 1.0), 0.5 + (h + 2) * 0.15);
+			vec4 text = mix(texture(Texture1, vTexCoords), texture(Texture2, vTexCoords), (-h) * 0.5);
+			color = mix(text, vec4(kd * col, 1.0), 0.5 + (h + 2) * 0.15);
 
 		}
 		if (vFragPosition.y >= 0 && vFragPosition.y < 2.5) { //sand

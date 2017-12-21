@@ -24,7 +24,7 @@ static bool g_capturedMouseJustNow = false;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 static int mode1 = 1;
-static float fog = 80;
+static float fog = 100;
 static bool fog_act = 0;
 static float gorit = 0.0;
 static float shift = 0.5;
@@ -720,7 +720,9 @@ int main(int argc, char** argv)
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		program.SetUniform("Texture1", 0);
-
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		program.SetUniform("Texture2", 1);
 		//рисуем плоскость
 
 		glBindVertexArray(vaoTriStrip);
@@ -742,9 +744,7 @@ int main(int argc, char** argv)
 		program2.SetUniform("fog_act",    fog_act);
 		program2.SetUniform("shift",      shift);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
-		program2.SetUniform("Texture2", 1);
+		
 
 		glBindVertexArray(vaoTriStrip2);
 		for (int i = -copies_num / 2; i <= copies_num / 2; i++) {
