@@ -6,6 +6,7 @@ uniform int mode1;
 uniform float fog;
 uniform float gorit;
 uniform bool fog_act;
+
 out vec4 color;
 
 float col_to_fl(float color) {

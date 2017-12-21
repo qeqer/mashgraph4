@@ -24,7 +24,7 @@ static bool g_capturedMouseJustNow = false;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 static int mode1 = 1;
-static float fog = 100;
+static float fog = 180;
 static bool fog_act = 0;
 static float gorit = 0.0;
 static float shift = 0.5;
@@ -94,6 +94,7 @@ void OnKeyboardPressed(GLFWwindow* window, int key, int scancode, int action, in
 				mode1 = 2;
 			}
 		}
+		break;
 	case GLFW_KEY_C:
 		if (action == GLFW_PRESS) {
 			change_map = true;
@@ -339,10 +340,10 @@ void makemagic(std::vector<std::vector<GLfloat> > &strip) { //нормировк
 
 	float tre = strip.size();
 	for (uint i = 1; i < tre - 1; i++) {
-		strip[i][0] = (strip[i - 1][0] + strip[i][0] + strip[i + 1][0]) / 3; 
-		strip[i][tre - 1] = (strip[i - 1][tre - 1] + strip[i][tre - 1] + strip[i + 1][tre - 1]) / 3; 
-		strip[0][i] = (strip[0][i - 1] + strip[0][i] + strip[0][i + 1]) / 3; 
-		strip[tre - 1][i] = (strip[tre - 1][i - 1] + strip[tre - 1][i] + strip[tre - 1][i + 1]) / 3; 
+		strip[i][0] = (strip[i - 1][0] + strip[i][0] + strip[i + 1][0]) / 3;
+		strip[i][tre - 1] = (strip[i - 1][tre - 1] + strip[i][tre - 1] + strip[i + 1][tre - 1]) / 3;
+		strip[0][i] = (strip[0][i - 1] + strip[0][i] + strip[0][i + 1]) / 3;
+		strip[tre - 1][i] = (strip[tre - 1][i - 1] + strip[tre - 1][i] + strip[tre - 1][i + 1]) / 3;
 	}
 
 	return;
@@ -585,6 +586,7 @@ int initGL()
 
 
 
+
 int main(int argc, char** argv)
 {
 	if (!glfwInit())
@@ -628,12 +630,16 @@ int main(int argc, char** argv)
 	shaders[GL_VERTEX_SHADER]   = "vertex.glsl";
 	shaders[GL_FRAGMENT_SHADER] = "fragment.glsl";
 	ShaderProgram program(shaders); GL_CHECK_ERRORS;
-	
+
 	std::unordered_map<GLenum, std::string> shaders2;
 	shaders2[GL_VERTEX_SHADER]   = "vertex_water.glsl";
 	shaders2[GL_FRAGMENT_SHADER] = "water.glsl";
 	ShaderProgram program2(shaders2); GL_CHECK_ERRORS;
-
+	
+	std::unordered_map<GLenum, std::string> shaders3;
+	shaders3[GL_VERTEX_SHADER]   = "vertex_sky.glsl";
+	shaders3[GL_FRAGMENT_SHADER] = "fragment_sky.glsl";
+	ShaderProgram program3(shaders3); GL_CHECK_ERRORS;
 
 	//Создаем и загружаем геометрию поверхности
 	GLuint vaoTriStrip;
@@ -642,12 +648,70 @@ int main(int argc, char** argv)
 	int triStripIndices2 = createTriStrip(res, res, sz, vaoTriStrip2, WATER);
 
 
+
+	//skybox
+	float cub = 400.0;
+	GLfloat vertices[] = {
+		cub, cub, cub,
+		-cub, cub, cub,
+		-cub, -cub, cub,
+		cub, -cub, cub,
+		cub, cub, -cub,
+		-cub, cub, -cub,
+		-cub, -cub, -cub,
+		cub, -cub, -cub,
+
+
+	};
+	GLuint indices[] = {  // Note that we start from 0!
+		0, 1, 3,  // First Triangle
+		1, 2, 3,   // Second Triangle
+		0, 1, 5,
+		0, 4, 5,
+		5, 4, 7,
+		6, 7, 5,
+		6, 7, 3,
+		6, 2, 3,
+		1, 6, 2,
+		6, 5, 1,
+		7, 4, 0,
+		7, 3, 0
+	};
+	GLuint VBO, VAO, EBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
+
+	glBindVertexArray(0); // Unbind
+
+
+
+
+
+
+
+
+
+
 	glViewport(0, 0, WIDTH, HEIGHT);  GL_CHECK_ERRORS;
 	glEnable(GL_DEPTH_TEST);  GL_CHECK_ERRORS;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	
+
 	//текстурки
 	GLuint texture1, texture2;
 	glGenTextures(1, &texture1);
@@ -663,18 +727,74 @@ int main(int argc, char** argv)
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
-	image = SOIL_load_image("textures/img2.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+	image = SOIL_load_image("textures/img1.jpg", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	//for sky
+	GLuint texture3, texture4;
+
+	glActiveTexture(GL_TEXTURE2);
+	glGenTextures(1, &texture3);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture3);GL_CHECK_ERRORS;
+	
+	image = SOIL_load_image("textures/skyday.png", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image); GL_CHECK_ERRORS;
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture3);GL_CHECK_ERRORS;
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image); GL_CHECK_ERRORS;
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture3);GL_CHECK_ERRORS;
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image); GL_CHECK_ERRORS;
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);GL_CHECK_ERRORS;
+	SOIL_free_image_data(image);
+
+	glActiveTexture(GL_TEXTURE3);
+	glGenTextures(1, &texture4);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture4);GL_CHECK_ERRORS;
+	
+	image = SOIL_load_image("textures/skynight.png", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image); GL_CHECK_ERRORS;
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image); GL_CHECK_ERRORS;
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image); GL_CHECK_ERRORS;
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);GL_CHECK_ERRORS;
+	SOIL_free_image_data(image);
+
+
+
+
+
+
+
+
 	//прозрачность
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// //цикл обработки сообщений и отрисовки сцены каждый кадр
 
+
+
+	// //цикл обработки сообщений и отрисовки сцены каждый кадр
 	while (!glfwWindowShouldClose(window))
 	{
 		if (change_map) {
@@ -702,11 +822,10 @@ int main(int argc, char** argv)
 		float4x4 projection = projectionMatrixTransposed(camera.zoom, float(WIDTH) / float(HEIGHT), 0.1f, 1000.0f);
 
 		//модельная матрица, определяющая положение объекта в мировом пространстве
-		float4x4 model; //начинаем с единичной матрицы
 
 		//простой свет
 		if (day_change) {
-			gorit = glfwGetTime();			
+			gorit = glfwGetTime();
 		} else {
 			gorit = 8;
 		}
@@ -716,7 +835,7 @@ int main(int argc, char** argv)
 
 		program.StartUseShader();
 
-		
+
 		//printf("%f\n", gorit);
 		//загружаем uniform-переменные в шейдерную программу (одинаковые для всех параллельно запускаемых копий шейдера)
 		program.SetUniform("view",       view);       GL_CHECK_ERRORS;
@@ -742,7 +861,7 @@ int main(int argc, char** argv)
 				glDrawElements(GL_TRIANGLE_STRIP, triStripIndices, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
 			}
 		}
-		
+
 		program2.StartUseShader(); GL_CHECK_ERRORS;
 
 		program2.SetUniform("view",       view);       GL_CHECK_ERRORS;
@@ -753,7 +872,7 @@ int main(int argc, char** argv)
 		program2.SetUniform("fog_act",    fog_act);
 		program2.SetUniform("shift",      shift);
 
-		
+
 
 		glBindVertexArray(vaoTriStrip2);
 		for (int i = -copies_num / 2; i <= copies_num / 2; i++) {
@@ -763,9 +882,35 @@ int main(int argc, char** argv)
 				glDrawElements(GL_TRIANGLE_STRIP, triStripIndices2, GL_UNSIGNED_INT, nullptr); GL_CHECK_ERRORS;
 			}
 		}
-		glBindVertexArray(0); GL_CHECK_ERRORS;
-		program2.StopUseShader();
+
+		//glDepthMask(GL_FALSE);
+		float4x4 model; //начинаем с единичной матрицы
+
+		program3.StartUseShader();
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texture3);
+		program3.SetUniform("Texture3", 2);
 		
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texture4);
+		program3.SetUniform("Texture4", 3);
+
+		program3.SetUniform("view",       view);       GL_CHECK_ERRORS;
+		program3.SetUniform("projection", projection); GL_CHECK_ERRORS;
+		program3.SetUniform("model",      model);GL_CHECK_ERRORS;
+		program3.SetUniform("cam",      camera.pos);GL_CHECK_ERRORS;
+		program3.SetUniform("fog",        fog);GL_CHECK_ERRORS;
+		program3.SetUniform("gorit",      gorit);GL_CHECK_ERRORS;
+		program3.SetUniform("fog_act",    fog_act);GL_CHECK_ERRORS;
+
+
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		//glDepthMask(GL_TRUE);
+		program3.StopUseShader();
+
 
 		glfwSwapBuffers(window);
 	}

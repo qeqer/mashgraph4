@@ -84,8 +84,8 @@ void main()
 	float real_time = 0.0; 
 	if (sin(gorit / day_len) > 0.3) {
 		real_time = 1.0;
-	} else if (sin(gorit / day_len) < -0.7) {
-			real_time = 0.0;
+	} else if (sin(gorit / day_len) < -0.6) {
+			real_time = 0.1;
 		} else {
 				real_time = (sin(gorit / day_len) + 0.7); 
 			}
